@@ -1,9 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
+# Importing the Required Libraries
 from random import random
 from numpy import load, zeros, ones, asarray, vstack
 from numpy.random import randint
@@ -17,15 +12,9 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
-# In[ ]:
-
-
 import sys
 sys.path.append('/Path')
 from instancenormalization import InstanceNormalization
-
-
-# In[ ]:
 
 
 # discriminator model (70x70 patchGAN)
@@ -53,9 +42,6 @@ def define_discriminator(image_shape):
 	return model
 
 
-# In[ ]:
-
-
 # generator a resnet block to be used in the generator.
 def resnet_block(n_filters, input_layer):
 	init = RandomNormal(stddev=0.02)
@@ -66,9 +52,6 @@ def resnet_block(n_filters, input_layer):
 	g = InstanceNormalization(axis=-1)(g)
 	g = Concatenate()([g, input_layer])
 	return g
-
-
-# In[ ]:
 
 
 # define the  generator model - encoder-decoder type architecture
@@ -100,9 +83,6 @@ def define_generator(image_shape, n_resnet=9):
 	return model
 
 
-# In[ ]:
-
-
 def define_composite_model(g_model_1, d_model, g_model_2, image_shape):
 	g_model_1.trainable = True
 	d_model.trainable = False
@@ -125,9 +105,6 @@ def define_composite_model(g_model_1, d_model, g_model_2, image_shape):
 	return model
 
 
-# In[ ]:
-
-
 # load and prepare training images
 def load_real_samples(filename):
 	data = load(filename)
@@ -137,17 +114,11 @@ def load_real_samples(filename):
 	return [X1, X2]
 
 
-# In[ ]:
-
-
 def generate_real_samples(dataset, n_samples, patch_shape):
 	ix = randint(0, dataset.shape[0], n_samples)
 	X = dataset[ix]
 	y = ones((n_samples, patch_shape, patch_shape, 1))
 	return X, y
-
-
-# In[ ]:
 
 
 def generate_fake_samples(g_model, dataset, patch_shape):
@@ -156,18 +127,12 @@ def generate_fake_samples(g_model, dataset, patch_shape):
 	return X, y
 
 
-# In[ ]:
-
-
 def save_models(step, g_model_AtoB, g_model_BtoA):
 	filename1 = 'g_model_AtoB_%06d.h5' % (step+1)
 	g_model_AtoB.save(filename1)
 	filename2 = 'g_model_BtoA_%06d.h5' % (step+1)
 	g_model_BtoA.save(filename2)
 	print('>Saved: %s and %s' % (filename1, filename2))
-
-
-# In[ ]:
 
 
 def summarize_performance(step, g_model, trainX, name, n_samples=5):
@@ -188,9 +153,6 @@ def summarize_performance(step, g_model, trainX, name, n_samples=5):
 	pyplot.close()
 
 
-# In[ ]:
-
-
 def update_image_pool(pool, images, max_size=50):
 	selected = list()
 	for image in images:
@@ -204,9 +166,6 @@ def update_image_pool(pool, images, max_size=50):
 			selected.append(pool[ix])
 			pool[ix] = image
 	return asarray(selected)
-
-
-# In[ ]:
 
 
 # train cyclegan models
@@ -243,11 +202,6 @@ def train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_mode
 			save_models(i, g_model_AtoB, g_model_BtoA)
 
 
-# # Training the Model
-
-# In[ ]:
-
-
 # load all images in a directory into memory
 def load_images(path, size=(256,256)):
 	data_list = list()
@@ -258,14 +212,8 @@ def load_images(path, size=(256,256)):
 	return asarray(data_list)
 
 
-# In[ ]:
-
-
 # dataset path
 path = '/path/'
-
-
-# In[ ]:
 
 
 # load dataset A - Monet paintings
@@ -289,16 +237,13 @@ dataB = resample(dataB_all,
                  random_state=42)
 
 
-# In[ ]:
-
-
 # plot source images
 n_samples = 3
 for i in range(n_samples):
 	plt.subplot(2, n_samples, 1 + i)
 	plt.axis('off')
 	plt.imshow(dataA[i].astype('uint8'))
-    
+
 # plot target image
 for i in range(n_samples):
 	plt.subplot(2, n_samples, 1 + n_samples + i)
@@ -307,19 +252,13 @@ for i in range(n_samples):
 plt.show()
 
 
-# In[ ]:
-
-
 # load image data
 data = [dataA, dataB]
 
 print('Loaded', data[0].shape, data[1].shape)
 
 
-# In[ ]:
-
-
-#Preprocess data to change input range to values between -1 and 1
+# Preprocess data to change input range to values between -1 and 1
 def preprocess_data(data):
 	X1, X2 = data[0], data[1]
 	X1 = (X1 - 127.5) / 127.5
@@ -327,13 +266,7 @@ def preprocess_data(data):
 	return [X1, X2]
 
 
-# In[ ]:
-
-
 dataset = preprocess_data(data)
-
-
-# In[ ]:
 
 
 image_shape = dataset[0].shape[1:]
@@ -343,9 +276,6 @@ d_model_A = define_discriminator(image_shape)
 d_model_B = define_discriminator(image_shape)
 c_model_AtoB = define_composite_model(g_model_AtoB, d_model_B, g_model_BtoA, image_shape)
 c_model_BtoA = define_composite_model(g_model_BtoA, d_model_A, g_model_AtoB, image_shape)
-
-
-# In[ ]:
 
 
 from datetime import datetime
@@ -359,11 +289,7 @@ execution_time = stop - start
 print("Execution time is: ", execution_time)
 
 
-# In[ ]:
-
-
 from tensorflow.keras.callbacks import ModelCheckpoint
-
 # Define a checkpoint callback
 checkpoint_path = 'checkpoint.h5'
 checkpoint_callback = ModelCheckpoint(filepath=checkpoint_path,
@@ -375,9 +301,6 @@ checkpoint_callback = ModelCheckpoint(filepath=checkpoint_path,
 # During model.compile(), add this callback to the callbacks list
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy', 'val_accuracy'],
               callbacks=[checkpoint_callback])
-
-
-# In[ ]:
 
 
 # Use the saved cyclegan models for image translation
@@ -393,9 +316,6 @@ def select_sample(dataset, n_samples):
 	return X
 
 
-# In[ ]:
-
-
 # plot the image, its translation, and the reconstruction
 def show_plot(imagesX, imagesY1, imagesY2):
 	images = vstack((imagesX, imagesY1, imagesY2))
@@ -408,9 +328,6 @@ def show_plot(imagesX, imagesY1, imagesY2):
 
 		pyplot.title(titles[i])
 	pyplot.show()
-
-
-# In[ ]:
 
 
 # load dataset
@@ -428,9 +345,6 @@ A_data = (A_data - 127.5) / 127.5
 B_data = (B_data - 127.5) / 127.5
 
 
-# In[ ]:
-
-
 # plot A->B->A (Monet to photo to Monet)
 A_real = select_sample(A_data, 1)
 B_generated  = model_AtoB.predict(A_real)
@@ -442,9 +356,6 @@ B_real = select_sample(B_data, 1)
 A_generated  = model_BtoA.predict(B_real)
 B_reconstructed = model_AtoB.predict(A_generated)
 show_plot(B_real, A_generated, B_reconstructed)
-
-
-# In[ ]:
 
 
 #Load a single custom image
