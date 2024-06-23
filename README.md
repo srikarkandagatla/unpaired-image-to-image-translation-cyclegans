@@ -5,7 +5,7 @@ Unpaired Image-to-Image Translation using CycleGANs (horse2zebra)
 ## Code
 Developed a 70x70 PatchGAN Discriminator and a 24-layer Generator model for effective unpaired image translation tasks. The model was trained using the horse2zebra dataset, running for 5 epochs to generate realistic fake images of horses transformed into zebras. This approach successfully reduced both discriminator and generator losses, demonstrating the effectiveness of the developed models in handling unpaired image translation tasks.
 
-# Dataset
+## Dataset
 The dataset is available at UC Berkeley. You can go ahead and access it here: https://efrosgans.eecs.berkeley.edu/cyclegan/datasets/.
 
 ## Instance Normalization (.py) File
