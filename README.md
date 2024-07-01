@@ -13,4 +13,5 @@ Contains code for instance normalization used in both the Discriminator (70x70 P
 
 ## References
 [1.] [CycleGAN Monet to Photo Repository](https://github.com/bnsreenu/python_for_microscopists/tree/master/253_254_cycleGAN_monet2photo)
+
 [2.] [Original CycleGAN Paper](https://arxiv.org/abs/1703.10593)
